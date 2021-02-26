@@ -8,3 +8,9 @@ edition = "2018"
 bytes = "1.0.1"
 chrono = "0.4.19"
 uuid = { version = "0.8.2", features = ["v4"] }
+async-trait = "0.1.42"
+thiserror = "1.0.24"
+tokio = { version =  "1.2.0", features = ["full"] }
+async-stream = "0.3.0"
+time = "0.2.25"
+tokio-stream = "0.1.3"
