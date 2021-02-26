@@ -1,7 +1,7 @@
 use bytes::Bytes;
 use chrono::{DateTime, Utc};
 use std::collections::HashMap;
-use std::fmt::{Display, Formatter, Result};
+use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 
 /// The core event type in Lever. An [`Event`] is anything meaningful thing that happens to a
@@ -17,6 +17,8 @@ pub struct Event {
 }
 
 impl Event {
+    /// Instantiate a new [`Event`]. The [`Event::id`] and [`Event::timestamp`] fields are supplied
+    /// automatically.
     pub fn new(
         thing_id: Uuid,
         kind: String,
@@ -38,7 +40,7 @@ impl Event {
 }
 
 impl Display for Event {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)
     }
 }
