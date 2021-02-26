@@ -1,9 +1,6 @@
-#[derive(Debug, thiserror::Error)]
-pub enum Error {}
-
 pub mod event {
-    use super::Error;
     use crate::data::Event;
+    use crate::error::Error;
     use async_trait::async_trait;
     use tokio_stream::StreamExt;
 
