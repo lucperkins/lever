@@ -26,13 +26,12 @@ pub mod event {
 
             while let Some(event) = event_stream.next().await {
                 match self.handle(&event).await {
-                    Ok(_) => println!("success"),
                     Err(errs) => {
-                        println!("failure");
                         for err in errs {
                             println!("  {:?}", err);
                         }
                     }
+                    _ => (),
                 }
             }
         }
