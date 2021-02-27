@@ -1,4 +1,8 @@
+use crate::error::Error;
 use bytes::Bytes;
+use serde_json::Value;
+use sqlx::postgres::PgValueRef;
+use sqlx::{Decode, Postgres};
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
 use uuid::Uuid;
@@ -8,17 +12,13 @@ use uuid::Uuid;
 pub struct Thing {
     id: Uuid,
     kind: String,
-    metadata: Option<HashMap<String, String>>,
-    data: Option<Bytes>,
+    metadata: Option<Value>,
+    data: Value,
 }
 
 impl Thing {
     /// Instantiate a new [`Thing`]. The [`Thing::id`] field is supplied automatically.
-    pub fn new(
-        kind: String,
-        metadata: Option<HashMap<String, String>>,
-        data: Option<Bytes>,
-    ) -> Self {
+    pub fn new(kind: String, metadata: Option<Value>, data: Value) -> Self {
         let id = Uuid::new_v4();
 
         Self {
