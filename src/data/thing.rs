@@ -4,7 +4,7 @@ use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 
 /// Essentially the "core" type in Lever. Everything that the system cares about is a [`Thing`].
-#[derive(Debug)]
+#[derive(Debug, sqlx::FromRow)]
 pub struct Thing {
     id: Uuid,
     kind: String,

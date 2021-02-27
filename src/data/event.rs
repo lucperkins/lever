@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 /// The core event type in Lever. An [`Event`] is anything meaningful thing that happens to a
 /// [`thing::Thing`] in the system.
-#[derive(Debug)]
+#[derive(Debug, sqlx::FromRow)]
 pub struct Event {
     id: Uuid,
     thing_id: Uuid,

@@ -10,6 +10,7 @@ async-graphql-warp = "2.5.8"
 async-trait = "0.1.42"
 bytes = "1.0.1"
 chrono = "0.4.19"
+sqlx = { version = "0.5.1", features = ["json", "postgres", "runtime-tokio-rustls"] }
 thiserror = "1.0.24"
 time = "0.2.25"
 tokio = { version = "1.2.0", features = ["full"] }
