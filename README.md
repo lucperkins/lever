@@ -176,23 +176,6 @@ Lever will provide a pretty straightforward HTTP+JSON API at first. Later, I
 plan to add a [GraphQL] API for running fine-grained queries over data about
 things and events and subscribing to event streams.
 
-## Use cases
-
-Lever is meant to be such a general building block that it can address just
-about any conceivable logistics use case. But here are some gentle suggestions
-about things you could use it for:
-
-* **Inventory** — Lever stores information about every item. Action handlers
-  perform periodic checks against all known items (or a subset). Event handlers
-  provide notifications when the number of items of a certain kind falls below
-  a specified threshold.
-* **Facilities management** — Lever stores information about all of your
-  facilities. Action handlers perform periodic audits. Event handlers provide
-  notifications about problems that arise.
-* **Hybrid** — This is arguably the most important use case. You can use Lever
-  for logistics across any number of domains, giving you a central hub for
-  insight into what's going on.
-
 ## Federation
 
 There's no reason in principle why different Lever systems couldn't be loosely
@@ -216,13 +199,20 @@ WIP but I'm aiming to have a proof of concept ready by mid-March 2021. It will
 start out as a monolithic web server that just stores everything in [PostgreSQL]
 but it will grow into much more than that over time.
 
+Development of the initial proof of concept is happening in the
+[`develop`][develop] branch. Lever will be written in the lovely [Rust]
+language.
+
 [actions]: #actions
 [api]: #api
+[develop]: /tree/develop
 [events]: #events
 [graphql]: https://graphql.org
+[guarantees]: #guarantees
 [handlers]: #handlers
 [history]: #history
 [lob]: https://lob.com
 [postgresql]: https://postgresql.org
+[rust]: https://rust-lang.org
 [stripe]: https://stripe.com
 [things]: #things
