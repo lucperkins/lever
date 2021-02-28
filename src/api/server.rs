@@ -22,12 +22,8 @@ impl Server {
 
         let schema = graphql_schema(db);
 
-        let graphql_post = async_graphql_warp::graphql(schema.clone()).and_then(
-            |(schema, request): (GraphQLSchema, async_graphql::Request)| async move {
-                let schema_res = schema.execute(request).await;
-                Ok::<_, Infallible>(Response::from(schema_res))
-            },
-        );
+        let graphql_post =
+            async_graphql_warp::graphql(schema.clone()).and_then(Self::graphql_handle);
 
         let graphql_playground = warp::path::end().and(warp::get()).map(|| {
             let playground_html =
@@ -49,5 +45,13 @@ impl Server {
         let _ = warp::serve(routes).run(addr).await;
 
         Ok(())
+    }
+
+    async fn graphql_handle(
+        (schema, req): (GraphQLSchema, async_graphql::Request),
+    ) -> Result<Response, Infallible> {
+        let schema_res = schema.execute(req).await;
+        let res = Response::from(schema_res);
+        Ok(res)
     }
 }
