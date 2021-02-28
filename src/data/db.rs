@@ -1,4 +1,4 @@
-use crate::data::Thing;
+use crate::data::{Thing, ThingInput};
 use crate::error::Error;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Pool, Postgres};
@@ -29,5 +29,25 @@ impl DB {
             .fetch_optional(&self.0)
             .await?;
         Ok(thing)
+    }
+
+    pub async fn create_thing(&self, thing: ThingInput) -> Result<Thing, Error> {
+        let id = Uuid::new_v4();
+
+        let query =
+            "INSERT INTO things (id, kind, status) VALUES ($1, $2, $3) RETURNING id, kind, status";
+
+        let mut tx = self.0.begin().await?;
+
+        let thing_ret: Thing = sqlx::query_as(query)
+            .bind(id)
+            .bind(thing.kind)
+            .bind(thing.status)
+            .fetch_one(&mut tx)
+            .await?;
+
+        let _ = tx.commit().await?;
+
+        Ok(thing_ret)
     }
 }

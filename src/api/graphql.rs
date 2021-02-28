@@ -1,11 +1,11 @@
-use crate::data::{Thing, DB};
-use async_graphql::{Context, EmptyMutation, EmptySubscription, FieldResult, Object, Schema};
+use crate::data::{Thing, ThingInput, DB};
+use async_graphql::{Context, EmptySubscription, FieldResult, Object, Schema};
 use uuid::Uuid;
 
-pub type GraphQLSchema = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
+pub type GraphQLSchema = Schema<QueryRoot, MutationRoot, EmptySubscription>;
 
 pub fn schema(db: DB) -> GraphQLSchema {
-    Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+    Schema::build(QueryRoot, MutationRoot, EmptySubscription)
         .data(db)
         .finish()
 }
@@ -24,5 +24,16 @@ impl QueryRoot {
         let db = ctx.data::<DB>()?;
         let thing: Option<Thing> = db.get_thing_by_id(id).await?;
         Ok(thing)
+    }
+}
+
+pub struct MutationRoot;
+
+#[Object]
+impl MutationRoot {
+    async fn create_thing(&self, ctx: &Context<'_>, thing: ThingInput) -> FieldResult<Thing> {
+        let db = ctx.data::<DB>()?;
+        let thing_ret: Thing = db.create_thing(thing).await?;
+        Ok(thing_ret)
     }
 }

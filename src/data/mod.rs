@@ -4,4 +4,4 @@ mod thing;
 
 pub use db::DB;
 pub use event::Event;
-pub use thing::Thing;
+pub use thing::{Thing, ThingInput};
