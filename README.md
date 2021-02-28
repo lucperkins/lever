@@ -173,17 +173,25 @@ powerful contracts:
 ## API
 
 Lever will provide a pretty straightforward HTTP+JSON API at first. Later, I
-plan to add a [GraphQL]
+plan to add a [GraphQL] API for running fine-grained queries over data about
+things and events and subscribing to event streams.
 
 ## Use cases
 
 Lever is meant to be such a general building block that it can address just
-about any conceivable logistics use case.
+about any conceivable logistics use case. But here are some gentle suggestions
+about things you could use it for:
 
-## Integrations
-
-The sky's the limit in terms of integrations with other systems. You can write
-action handlers that talk to [Stripe]
+* **Inventory** — Lever stores information about every item. Action handlers
+  perform periodic checks against all known items (or a subset). Event handlers
+  provide notifications when the number of items of a certain kind falls below
+  a specified threshold.
+* **Facilities management** — Lever stores information about all of your
+  facilities. Action handlers perform periodic audits. Event handlers provide
+  notifications about problems that arise.
+* **Hybrid** — This is arguably the most important use case. You can use Lever
+  for logistics across any number of domains, giving you a central hub for
+  insight into what's going on.
 
 ## Federation
 
