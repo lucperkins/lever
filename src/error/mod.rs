@@ -1,3 +1,8 @@
-mod error;
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    #[error("sql error")]
+    Sql(#[from] sqlx::Error),
 
-pub use error::Error;
+    #[error("an unknown error occurred")]
+    Unknown,
+}
