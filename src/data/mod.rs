@@ -2,6 +2,6 @@ mod db;
 mod event;
 mod thing;
 
-pub use db::Things;
+pub use db::DB;
 pub use event::Event;
 pub use thing::Thing;
