@@ -9,7 +9,6 @@ jobs:
     strategy:
       matrix:
         rust:
-          - stable
           - 1.50.0
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +27,6 @@ jobs:
     strategy:
       matrix:
         rust:
-          - stable
           - 1.50.0
     steps:
       - uses: actions/checkout@v2
@@ -49,7 +47,6 @@ jobs:
     strategy:
       matrix:
         rust:
-          - stable
           - 1.50.0
     steps:
       - uses: actions/checkout@v2
@@ -70,7 +67,6 @@ jobs:
     strategy:
       matrix:
         rust:
-          - stable
           - 1.50.0
     steps:
       - uses: actions/checkout@v2
