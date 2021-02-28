@@ -22,13 +22,10 @@ pub mod event {
             println!("Starting up the executor");
 
             while let Some(event) = event_stream.next().await {
-                match self.handle(&event).await {
-                    Err(errs) => {
-                        for err in errs {
-                            println!("  {:?}", err);
-                        }
+                if let Err(errs) = self.handle(&event).await {
+                    for err in errs {
+                        println!("{:?}", err);
                     }
-                    _ => (),
                 }
             }
         }
@@ -37,9 +34,8 @@ pub mod event {
             let mut errors: Vec<Error> = vec![];
 
             for handler in &self.handlers {
-                match handler.handle(&event).await {
-                    Err(e) => errors.push(e),
-                    _ => (),
+                if let Err(err) = handler.handle(&event).await {
+                    errors.push(err);
                 }
             }
 

@@ -2,7 +2,6 @@ use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql::{Context, EmptyMutation, EmptySubscription, Object, Schema};
 use async_graphql_warp::{graphql_subscription, Response};
 use lever::error::Error;
-use serde_json::Value;
 use std::convert::Infallible;
 use warp::{http::Response as HttpResponse, Filter};
 
