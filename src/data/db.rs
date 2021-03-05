@@ -35,7 +35,7 @@ impl DB {
         let id = Uuid::new_v4();
 
         let query =
-            "INSERT INTO things (id, kind, status) VALUES ($1, $2, $3) RETURNING id, kind, status";
+            "INSERT INTO things (id, kind, status, metadata) VALUES ($1, $2, $3, $4) RETURNING id, kind, status, metadata";
 
         let mut tx = self.0.begin().await?;
 
@@ -43,6 +43,7 @@ impl DB {
             .bind(id)
             .bind(thing.kind)
             .bind(thing.status)
+            .bind(thing.metadata)
             .fetch_one(&mut tx)
             .await?;
 

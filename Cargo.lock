@@ -1009,6 +1009,7 @@ dependencies = [
  "async-trait",
  "bytes 1.0.1",
  "chrono",
+ "serde",
  "serde_json",
  "sqlx",
  "structopt",
@@ -1673,9 +1674,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.63"
+version = "1.0.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43535db9747a4ba938c0ce0a98cc631a46ebf943c9e1d604e091df6007620bf6"
+checksum = "799e97dc9fdae36a5c8b8f2cae9ce2ee9fdce2058c57a93e6099d919fd982f79"
 dependencies = [
  "indexmap",
  "itoa",
@@ -1799,8 +1800,7 @@ dependencies = [
 [[package]]
 name = "sqlx"
 version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2739d54a2ae9fdd0f545cb4e4b5574efb95e2ec71b7f921678e246fb20dcaaf"
+source = "git+https://github.com/lucperkins/sqlx?branch=serde-json-map-postgres#d1c927946fc7fc3b9800f5a77d97679ffda4c282"
 dependencies = [
  "sqlx-core",
  "sqlx-macros",
@@ -1809,8 +1809,7 @@ dependencies = [
 [[package]]
 name = "sqlx-core"
 version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1cad9cae4ca8947eba1a90e8ec7d3c59e7a768e2f120dc9013b669c34a90711"
+source = "git+https://github.com/lucperkins/sqlx?branch=serde-json-map-postgres#d1c927946fc7fc3b9800f5a77d97679ffda4c282"
 dependencies = [
  "ahash 0.6.3",
  "atoi",
@@ -1859,8 +1858,7 @@ dependencies = [
 [[package]]
 name = "sqlx-macros"
 version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01caee2b3935b4efe152f3262afbe51546ce3b1fc27ad61014e1b3cf5f55366e"
+source = "git+https://github.com/lucperkins/sqlx?branch=serde-json-map-postgres#d1c927946fc7fc3b9800f5a77d97679ffda4c282"
 dependencies = [
  "dotenv",
  "either",
@@ -1879,8 +1877,7 @@ dependencies = [
 [[package]]
 name = "sqlx-rt"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ce2e16b6774c671cc183e1d202386fdf9cde1e8468c1894a7f2a63eb671c4f4"
+source = "git+https://github.com/lucperkins/sqlx?branch=serde-json-map-postgres#d1c927946fc7fc3b9800f5a77d97679ffda4c282"
 dependencies = [
  "once_cell",
  "tokio",
