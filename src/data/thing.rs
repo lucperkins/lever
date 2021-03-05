@@ -1,5 +1,4 @@
 use async_graphql::scalar;
-use async_graphql::validators::InputValueValidator;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use std::fmt::{Display, Formatter};
@@ -11,31 +10,16 @@ pub struct Thing {
     pub id: Uuid,
     pub kind: String,
     pub status: String,
-    pub metadata: Option<Metadata>,
+    pub metadata: Option<Data>,
+    pub data: Data,
 }
 
 #[derive(async_graphql::InputObject)]
 pub struct ThingInput {
     pub kind: String,
     pub status: String,
-    pub metadata: Option<Metadata>,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize, sqlx::Type)]
-#[sqlx(transparent)]
-pub struct Metadata(Map<String, Value>);
-
-scalar!(Metadata);
-
-impl InputValueValidator for ThingInput {
-    fn is_valid(&self, _: &async_graphql::Value) -> Result<(), String> {
-        if let Some(meta) = &self.metadata {
-            if !meta.0.is_empty() {
-                return Err("metadata can't be empty".to_owned());
-            }
-        }
-        Ok(())
-    }
+    pub metadata: Option<Data>,
+    pub data: Data,
 }
 
 impl Display for Thing {
@@ -43,3 +27,9 @@ impl Display for Thing {
         write!(f, "{:?}", self)
     }
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize, sqlx::Type)]
+#[sqlx(transparent)]
+pub struct Data(Map<String, Value>);
+
+scalar!(Data);
