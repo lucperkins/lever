@@ -1,5 +1,6 @@
-use crate::data::{Thing, ThingInput};
+use crate::data::{Data, Thing, ThingInput};
 use crate::error::Error;
+use indoc::indoc;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Pool, Postgres};
 use uuid::Uuid;
@@ -31,25 +32,132 @@ impl DB {
         Ok(thing)
     }
 
-    pub async fn create_thing(&self, thing: ThingInput) -> Result<Thing, Error> {
+    pub async fn create_thing(&self, input: ThingInput) -> Result<Thing, Error> {
+        if !input.is_valid() {
+            return Err(Error::InvalidInput);
+        }
+
         let id = Uuid::new_v4();
 
-        let query =
-            "INSERT INTO things (id, kind, status, metadata, data) VALUES ($1, $2, $3, $4, $5) RETURNING id, kind, status, metadata, data";
+        let query = indoc! {r#"
+            INSERT INTO things (id, kind, status, metadata, data)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING id, kind, status, metadata, data
+        "#};
 
         let mut tx = self.0.begin().await?;
 
-        let thing_ret: Thing = sqlx::query_as(query)
+        let thing: Thing = sqlx::query_as(query)
             .bind(id)
-            .bind(thing.kind)
-            .bind(thing.status)
-            .bind(thing.metadata)
-            .bind(thing.data)
+            .bind(input.kind)
+            .bind(input.status)
+            .bind(input.metadata)
+            .bind(input.data)
             .fetch_one(&mut tx)
             .await?;
 
         let _ = tx.commit().await?;
 
-        Ok(thing_ret)
+        Ok(thing)
+    }
+
+    pub async fn update_thing_kind(&self, id: Uuid, kind: String) -> Result<Thing, Error> {
+        if kind.is_empty() {
+            return Err(Error::EmptyKind);
+        }
+
+        let query = indoc! {r#"
+            UPDATE things
+            SET kind = $1
+            WHERE id = $2
+            RETURNING id, kind, status, metadata, data
+        "#};
+
+        let mut tx = self.0.begin().await?;
+
+        let thing: Thing = sqlx::query_as(query)
+            .bind(kind)
+            .bind(id)
+            .fetch_one(&mut tx)
+            .await?;
+
+        let _ = tx.commit().await?;
+
+        Ok(thing)
+    }
+
+    pub async fn update_thing_status(&self, id: Uuid, status: String) -> Result<Thing, Error> {
+        if status.is_empty() {
+            return Err(Error::EmptyStatus);
+        }
+
+        let query = indoc! {r#"
+            UPDATE things
+            SET status = $1
+            WHERE id = $2
+            RETURNING id, kind, status, metadata, data
+        "#};
+
+        let mut tx = self.0.begin().await?;
+
+        let thing: Thing = sqlx::query_as(query)
+            .bind(status)
+            .bind(id)
+            .fetch_one(&mut tx)
+            .await?;
+
+        let _ = tx.commit().await?;
+
+        Ok(thing)
+    }
+
+    pub async fn update_thing_metadata(&self, id: Uuid, metadata: Data) -> Result<Thing, Error> {
+        if !metadata.is_valid() {
+            return Err(Error::EmptyData);
+        }
+
+        let query = indoc! {r#"
+            UPDATE things
+            SET metadata = $1
+            WHERE id = $2
+            RETURNING id, kind, status, metadata, data
+        "#};
+
+        let mut tx = self.0.begin().await?;
+
+        let thing: Thing = sqlx::query_as(query)
+            .bind(metadata)
+            .bind(id)
+            .fetch_one(&mut tx)
+            .await?;
+
+        let _ = tx.commit().await?;
+
+        Ok(thing)
+    }
+
+    pub async fn update_thing_data(&self, id: Uuid, data: Data) -> Result<Thing, Error> {
+        if !data.is_valid() {
+            return Err(Error::EmptyData);
+        }
+
+        let query = indoc! {r#"
+            UPDATE things
+            SET data = $1
+            WHERE id = $2
+            RETURNING id, kind, status, metadata, data
+        "#};
+
+        let mut tx = self.0.begin().await?;
+
+        let thing: Thing = sqlx::query_as(query)
+            .bind(data)
+            .bind(id)
+            .fetch_one(&mut tx)
+            .await?;
+
+        let _ = tx.commit().await?;
+
+        Ok(thing)
     }
 }

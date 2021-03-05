@@ -1,4 +1,4 @@
-use crate::data::{Thing, ThingInput, DB};
+use crate::data::{Data, Thing, ThingInput, DB};
 use async_graphql::{Context, EmptySubscription, FieldResult, Object, Schema};
 use uuid::Uuid;
 
@@ -31,9 +31,53 @@ pub struct MutationRoot;
 
 #[Object]
 impl MutationRoot {
-    async fn create_thing(&self, ctx: &Context<'_>, thing: ThingInput) -> FieldResult<Thing> {
+    async fn create_thing(&self, ctx: &Context<'_>, input: ThingInput) -> FieldResult<Thing> {
         let db = ctx.data::<DB>()?;
-        let thing_ret: Thing = db.create_thing(thing).await?;
-        Ok(thing_ret)
+        let thing: Thing = db.create_thing(input).await?;
+        Ok(thing)
+    }
+
+    async fn update_thing_kind(
+        &self,
+        ctx: &Context<'_>,
+        id: Uuid,
+        kind: String,
+    ) -> FieldResult<Thing> {
+        let db = ctx.data::<DB>()?;
+        let thing: Thing = db.update_thing_kind(id, kind).await?;
+        Ok(thing)
+    }
+
+    async fn update_thing_status(
+        &self,
+        ctx: &Context<'_>,
+        id: Uuid,
+        status: String,
+    ) -> FieldResult<Thing> {
+        let db = ctx.data::<DB>()?;
+        let thing: Thing = db.update_thing_status(id, status).await?;
+        Ok(thing)
+    }
+
+    async fn update_thing_metadata(
+        &self,
+        ctx: &Context<'_>,
+        id: Uuid,
+        metadata: Data,
+    ) -> FieldResult<Thing> {
+        let db = ctx.data::<DB>()?;
+        let thing: Thing = db.update_thing_metadata(id, metadata).await?;
+        Ok(thing)
+    }
+
+    async fn update_thing_data(
+        &self,
+        ctx: &Context<'_>,
+        id: Uuid,
+        data: Data,
+    ) -> FieldResult<Thing> {
+        let db = ctx.data::<DB>()?;
+        let thing: Thing = db.update_thing_data(id, data).await?;
+        Ok(thing)
     }
 }

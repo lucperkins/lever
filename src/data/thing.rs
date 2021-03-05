@@ -20,6 +20,12 @@ pub struct ThingInput {
     pub data: Data,
 }
 
+impl ThingInput {
+    pub fn is_valid(&self) -> bool {
+        !self.kind.is_empty() && !self.status.is_empty() && self.data.is_valid()
+    }
+}
+
 impl Display for Thing {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)

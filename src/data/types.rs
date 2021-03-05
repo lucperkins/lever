@@ -6,4 +6,10 @@ use serde_json::{Map, Value};
 #[sqlx(transparent)]
 pub struct Data(Map<String, Value>);
 
+impl Data {
+    pub fn is_valid(&self) -> bool {
+        !self.0.is_empty()
+    }
+}
+
 scalar!(Data);
