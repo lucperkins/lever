@@ -1,5 +1,9 @@
+.PHONY: check ci clippy dev fmt test
+
 check:
 	cargo check
+
+ci: check fmt clippy test
 
 clippy:
 	cargo clippy -- --deny warnings
@@ -12,5 +16,3 @@ fmt:
 
 test:
 	cargo test
-
-ci: check fmt clippy test
