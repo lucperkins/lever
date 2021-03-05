@@ -5,5 +5,5 @@ mod types;
 
 pub use db::DB;
 pub use event::Event;
-pub use thing::{Thing, ThingInput};
+pub use thing::{CreateThingInput, Thing};
 pub use types::Data;

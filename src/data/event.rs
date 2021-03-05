@@ -1,40 +1,55 @@
-use bytes::Bytes;
+use crate::data::Data;
 use chrono::{DateTime, Utc};
-use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 
 /// The core event type in Lever. An [`Event`] is anything meaningful thing that happens to a
 /// [`thing::Thing`] in the system.
-#[derive(Debug, sqlx::FromRow)]
+#[derive(Debug, async_graphql::SimpleObject, sqlx::FromRow)]
 pub struct Event {
-    id: Uuid,
+    pub id: Uuid,
+    pub thing_id: Uuid,
+    pub kind: String,
+    pub timestamp: DateTime<Utc>,
+    pub metadata: Option<Data>,
+}
+
+#[derive(async_graphql::InputObject)]
+pub struct CreateEventInput {
     thing_id: Uuid,
     kind: String,
-    timestamp: DateTime<Utc>,
-    metadata: Option<HashMap<String, String>>,
-    data: Option<Bytes>,
+    metadata: Option<Data>,
+}
+
+impl CreateEventInput {
+    pub fn new(thing_id: Uuid, kind: String, metadata: Option<Data>) -> Self {
+        Self {
+            thing_id,
+            kind,
+            metadata,
+        }
+    }
+}
+
+impl CreateEventInput {
+    pub fn is_valid(&self) -> bool {
+        !self.kind.is_empty()
+    }
 }
 
 impl Event {
     /// Instantiate a new [`Event`]. The [`Event::id`] and [`Event::timestamp`] fields are supplied
     /// automatically.
-    pub fn new(
-        thing_id: Uuid,
-        kind: String,
-        metadata: Option<HashMap<String, String>>,
-        data: Option<Bytes>,
-    ) -> Self {
+    pub fn new(input: CreateEventInput) -> Self {
         let id = Uuid::new_v4();
         let timestamp = Utc::now();
 
         Self {
             id,
-            thing_id,
-            kind,
+            thing_id: input.thing_id,
+            kind: input.kind,
             timestamp,
-            metadata,
-            data,
+            metadata: input.metadata,
         }
     }
 }

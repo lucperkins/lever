@@ -1827,6 +1827,7 @@ dependencies = [
  "bitflags",
  "byteorder",
  "bytes 1.0.1",
+ "chrono",
  "crc",
  "crossbeam-channel",
  "crossbeam-queue",

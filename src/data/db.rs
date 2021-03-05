@@ -1,4 +1,5 @@
-use crate::data::{Data, Thing, ThingInput};
+use crate::data::event::CreateEventInput;
+use crate::data::{CreateThingInput, Data, Event, Thing};
 use crate::error::Error;
 use indoc::indoc;
 use sqlx::postgres::PgPoolOptions;
@@ -17,6 +18,18 @@ impl DB {
         Ok(Self(pool))
     }
 
+    pub async fn all_events(&self) -> Result<Vec<Event>, Error> {
+        let query = "SELECT * FROM events";
+        let events: Vec<Event> = sqlx::query_as(query).fetch_all(&self.0).await?;
+        Ok(events)
+    }
+
+    pub async fn events_by_kind(&self, kind: String) -> Result<Vec<Event>, Error> {
+        let query = "SELECT * FROM events WHERE kind = $1";
+        let events: Vec<Event> = sqlx::query_as(query).bind(kind).fetch_all(&self.0).await?;
+        Ok(events)
+    }
+
     pub async fn all_things(&self) -> Result<Vec<Thing>, Error> {
         let query = "SELECT * FROM things";
         let things: Vec<Thing> = sqlx::query_as(query).fetch_all(&self.0).await?;
@@ -32,12 +45,47 @@ impl DB {
         Ok(thing)
     }
 
-    pub async fn create_thing(&self, input: ThingInput) -> Result<Thing, Error> {
+    pub async fn get_thing_history(&self, id: Uuid) -> Result<Vec<Event>, Error> {
+        let query = "SELECT * FROM events WHERE thing_id = $1";
+        let events: Vec<Event> = sqlx::query_as(query).bind(id).fetch_all(&self.0).await?;
+        Ok(events)
+    }
+
+    async fn create_event(&self, input: CreateEventInput) -> Result<Event, Error> {
         if !input.is_valid() {
             return Err(Error::InvalidInput);
         }
 
-        let id = Uuid::new_v4();
+        let event = Event::new(input);
+
+        let query = indoc! {r#"
+            INSERT INTO events (id, thing_id, kind, timestamp, metadata)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING id, thing_id, kind, timestamp, metadata
+        "#};
+
+        let mut tx = self.0.begin().await?;
+
+        let event_ret: Event = sqlx::query_as(query)
+            .bind(event.id)
+            .bind(event.thing_id)
+            .bind(event.kind)
+            .bind(event.timestamp)
+            .bind(event.metadata)
+            .fetch_one(&mut tx)
+            .await?;
+
+        let _ = tx.commit().await?;
+
+        Ok(event_ret)
+    }
+
+    pub async fn create_thing(&self, input: CreateThingInput) -> Result<Thing, Error> {
+        if !input.is_valid() {
+            return Err(Error::InvalidInput);
+        }
+
+        let thing = Thing::new(input);
 
         let query = indoc! {r#"
             INSERT INTO things (id, kind, status, metadata, data)
@@ -48,15 +96,19 @@ impl DB {
         let mut tx = self.0.begin().await?;
 
         let thing: Thing = sqlx::query_as(query)
-            .bind(id)
-            .bind(input.kind)
-            .bind(input.status)
-            .bind(input.metadata)
-            .bind(input.data)
+            .bind(thing.id)
+            .bind(thing.kind)
+            .bind(thing.status)
+            .bind(thing.metadata)
+            .bind(thing.data)
             .fetch_one(&mut tx)
             .await?;
 
         let _ = tx.commit().await?;
+
+        let _ = self
+            .create_event(CreateEventInput::new(thing.id, "create".to_owned(), None))
+            .await?;
 
         Ok(thing)
     }
@@ -83,6 +135,14 @@ impl DB {
 
         let _ = tx.commit().await?;
 
+        let _ = self
+            .create_event(CreateEventInput::new(
+                thing.id,
+                "update_kind".to_owned(),
+                None,
+            ))
+            .await?;
+
         Ok(thing)
     }
 
@@ -107,6 +167,14 @@ impl DB {
             .await?;
 
         let _ = tx.commit().await?;
+
+        let _ = self
+            .create_event(CreateEventInput::new(
+                thing.id,
+                "update_status".to_owned(),
+                None,
+            ))
+            .await?;
 
         Ok(thing)
     }
@@ -133,6 +201,14 @@ impl DB {
 
         let _ = tx.commit().await?;
 
+        let _ = self
+            .create_event(CreateEventInput::new(
+                thing.id,
+                "update_metadata".to_owned(),
+                None,
+            ))
+            .await?;
+
         Ok(thing)
     }
 
@@ -157,6 +233,14 @@ impl DB {
             .await?;
 
         let _ = tx.commit().await?;
+
+        let _ = self
+            .create_event(CreateEventInput::new(
+                thing.id,
+                "update_data".to_owned(),
+                None,
+            ))
+            .await?;
 
         Ok(thing)
     }

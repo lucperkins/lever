@@ -1,4 +1,4 @@
-use crate::data::{Data, Thing, ThingInput, DB};
+use crate::data::{CreateThingInput, Data, Event, Thing, DB};
 use async_graphql::{Context, EmptySubscription, FieldResult, Object, Schema};
 use uuid::Uuid;
 
@@ -25,13 +25,31 @@ impl QueryRoot {
         let thing: Option<Thing> = db.get_thing_by_id(id).await?;
         Ok(thing)
     }
+
+    async fn thing_history(&self, ctx: &Context<'_>, id: Uuid) -> FieldResult<Vec<Event>> {
+        let db = ctx.data::<DB>()?;
+        let events: Vec<Event> = db.get_thing_history(id).await?;
+        Ok(events)
+    }
+
+    async fn events(&self, ctx: &Context<'_>) -> FieldResult<Vec<Event>> {
+        let db = ctx.data::<DB>()?;
+        let events: Vec<Event> = db.all_events().await?;
+        Ok(events)
+    }
+
+    async fn events_by_kind(&self, ctx: &Context<'_>, kind: String) -> FieldResult<Vec<Event>> {
+        let db = ctx.data::<DB>()?;
+        let events: Vec<Event> = db.events_by_kind(kind).await?;
+        Ok(events)
+    }
 }
 
 pub struct MutationRoot;
 
 #[Object]
 impl MutationRoot {
-    async fn create_thing(&self, ctx: &Context<'_>, input: ThingInput) -> FieldResult<Thing> {
+    async fn create_thing(&self, ctx: &Context<'_>, input: CreateThingInput) -> FieldResult<Thing> {
         let db = ctx.data::<DB>()?;
         let thing: Thing = db.create_thing(input).await?;
         Ok(thing)

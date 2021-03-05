@@ -13,7 +13,7 @@ chrono = "0.4.19"
 indoc = "1.0.3"
 serde = "1.0.123"
 serde_json = "1.0.64"
-sqlx = { version = "0.5.1", git = "https://github.com/lucperkins/sqlx", branch = "serde-json-map-postgres", features = ["json", "postgres", "runtime-tokio-rustls", "uuid"] }
+sqlx = { version = "0.5.1", git = "https://github.com/lucperkins/sqlx", branch = "serde-json-map-postgres", features = ["chrono", "json", "postgres", "runtime-tokio-rustls", "uuid"] }
 structopt = "0.3.21"
 thiserror = "1.0.24"
 time = "0.2.25"

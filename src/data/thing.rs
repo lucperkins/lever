@@ -13,14 +13,28 @@ pub struct Thing {
 }
 
 #[derive(async_graphql::InputObject)]
-pub struct ThingInput {
+pub struct CreateThingInput {
     pub kind: String,
     pub status: String,
     pub metadata: Option<Data>,
     pub data: Data,
 }
 
-impl ThingInput {
+impl Thing {
+    pub fn new(input: CreateThingInput) -> Self {
+        let id = Uuid::new_v4();
+
+        Self {
+            id,
+            kind: input.kind,
+            status: input.status,
+            metadata: input.metadata,
+            data: input.data,
+        }
+    }
+}
+
+impl CreateThingInput {
     pub fn is_valid(&self) -> bool {
         !self.kind.is_empty() && !self.status.is_empty() && self.data.is_valid()
     }
